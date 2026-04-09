@@ -1,0 +1,10 @@
+export { Emisor, EmisorData } from './Emisor';
+export { Receptor, ReceptorData } from './Receptor';
+export { Traslado, TrasladoData } from './Traslado';
+export { Retencion, RetencionData } from './Retencion';
+export { ImpuestosConcepto, ImpuestosConceptoData } from './ImpuestosConcepto';
+export { Concepto, ConceptoData } from './Concepto';
+export { TrasladoGlobal, TrasladoGlobalData } from './TrasladoGlobal';
+export { RetencionGlobal, RetencionGlobalData } from './RetencionGlobal';
+export { Impuestos, ImpuestosData } from './Impuestos';
+export { Cfdi4Request, Cfdi4RequestData } from './Cfdi4Request';
