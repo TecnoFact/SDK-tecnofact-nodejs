@@ -1,0 +1,63 @@
+{
+  "name": "@tecnofact/sdk-nodejs",
+  "version": "1.0.0",
+  "description": "SDK oficial de Node.js para la integración con el servicio de Timbrado CFDI 4.0 de TecnoFact",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "tecnofact",
+    "cfdi",
+    "facturacion",
+    "sat",
+    "mexico",
+    "timbrado",
+    "factura-electronica",
+    "pac"
+  ],
+  "author": "TecnoFact",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TecnoFact/SDK-tecnofact-nodejs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TecnoFact/SDK-tecnofact-nodejs/issues"
+  },
+  "homepage": "https://github.com/TecnoFact/SDK-tecnofact-nodejs#readme",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "jest": "^29.5.0",
+    "prettier": "^3.0.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  }
+}
