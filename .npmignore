@@ -1,0 +1,48 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Tests
+**/__tests__/
+**/*.test.ts
+**/*.spec.ts
+jest.config.js
+coverage/
+
+# Development files
+.env
+.env.example
+tsconfig.json
+.eslintrc.json
+.prettierrc.json
+
+# Documentation source
+examples/
+docs/
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Misc
+.DS_Store
+node_modules/
