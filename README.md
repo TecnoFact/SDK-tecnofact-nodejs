@@ -340,7 +340,42 @@ try {
 }
 ```
 
+## 🐳 Desarrollo con Docker
+
+El proyecto incluye configuración de Docker para facilitar el desarrollo:
+
+```bash
+# Modo desarrollo (watch mode)
+docker-compose up sdk-dev
+
+# Ejecutar tests
+docker-compose up sdk-test
+
+# Ejecutar linter
+docker-compose up sdk-lint
+```
+
+Ver [README.docker.md](./README.docker.md) para más detalles.
+
+## 🔄 CI/CD
+
+El proyecto utiliza GitHub Actions para:
+
+- **CI (Continuous Integration)**: Tests automáticos en cada push/PR
+  - Ejecuta tests en Node.js 14.x, 16.x, 18.x, 20.x
+  - Verifica linting y cobertura de código
+  - Sube reportes de cobertura a Codecov
+
+- **CD (Continuous Deployment)**: Publicación automática
+  - Genera releases en GitHub al crear tags `v*.*.*`
+  - Publica automáticamente a npm
+  - Genera changelog automático
+
+- **Security**: Análisis de seguridad con CodeQL
+
 ## 🧪 Testing
+
+El SDK incluye una suite completa de tests unitarios.
 
 ### Ejecutar Tests
 
