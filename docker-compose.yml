@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  sdk-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tecnofact-sdk-dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
+    stdin_open: true
+    tty: true
+
+  sdk-test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tecnofact-sdk-test
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+    command: npm run test:coverage
+    stdin_open: true
+    tty: true
+
+  sdk-lint:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tecnofact-sdk-lint
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run lint
+    stdin_open: true
+    tty: true
