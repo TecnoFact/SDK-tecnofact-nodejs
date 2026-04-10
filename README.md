@@ -1,8 +1,14 @@
 # TecnoFact SDK para Facturación Electrónica CFDI 4.0 - Node.js
 
 [![npm version](https://badge.fury.io/js/%40tecnofact%2Fsdk-nodejs.svg)](https://badge.fury.io/js/%40tecnofact%2Fsdk-nodejs)
+[![npm downloads](https://img.shields.io/npm/dm/@tecnofact/sdk-nodejs.svg)](https://www.npmjs.com/package/@tecnofact/sdk-nodejs)
+[![CI](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/ci.yml/badge.svg)](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/TecnoFact/SDK-tecnofact-nodejs/branch/main/graph/badge.svg)](https://codecov.io/gh/TecnoFact/SDK-tecnofact-nodejs)
+[![CodeQL](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/codeql.yml/badge.svg)](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen.svg)](https://nodejs.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/TecnoFact/SDK-tecnofact-nodejs/blob/main/CONTRIBUTING.md)
 
 SDK oficial de Node.js/TypeScript para la integración con el servicio de Timbrado CFDI 4.0 de TecnoFact. Facilita la emisión, cancelación y consulta de facturas electrónicas cumpliendo con los requisitos del SAT mexicano.
 
