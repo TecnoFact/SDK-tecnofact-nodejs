@@ -26,15 +26,19 @@ export class Config {
     this.apiKey = options.apiKey;
     this.apiSecret = options.apiSecret;
     this.environment = options.environment || Environment.SANDBOX;
-    this.timeout = options.timeout || 30000;
-    this.retries = options.retries || 3;
+    
+    const timeout = options.timeout !== undefined ? options.timeout : 30000;
+    const retries = options.retries !== undefined ? options.retries : 3;
 
-    if (this.timeout <= 0) {
+    if (timeout <= 0) {
       throw new Error('timeout must be greater than 0');
     }
-    if (this.retries < 0) {
+    if (retries < 0) {
       throw new Error('retries must be non-negative');
     }
+
+    this.timeout = timeout;
+    this.retries = retries;
   }
 
   getApiKey(): string {

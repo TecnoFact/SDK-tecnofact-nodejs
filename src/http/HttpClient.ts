@@ -11,13 +11,11 @@ import {
 } from '../exceptions';
 
 export class HttpClient implements IHttpClient {
-  private readonly config: Config;
   private readonly baseUrl: string;
   private readonly timeout: number;
   private readonly axiosInstance: AxiosInstance;
 
   constructor(config: Config) {
-    this.config = config;
     this.baseUrl = config.getBaseUrl();
     this.timeout = config.getTimeout();
 
