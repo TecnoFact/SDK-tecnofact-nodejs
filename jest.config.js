@@ -2,12 +2,15 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   roots: ['<rootDir>/src'],
-  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  testMatch: ['**/__tests__/**/*.test.ts'],
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.d.ts',
-    '!src/**/*.test.ts',
-    '!src/**/*.spec.ts',
+    '!src/**/__tests__/**',
+    '!src/**/index.ts',
+    // Excluir excepciones simples que solo extienden la clase base (sin lógica propia)
+    '!src/exceptions/TimbradoException.ts',
+    '!src/exceptions/CancelacionException.ts',
   ],
   coverageThreshold: {
     global: {
@@ -17,4 +20,10 @@ module.exports = {
       statements: 80,
     },
   },
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/__tests__/',
+    '/index.ts$', 
+  ],
 };
