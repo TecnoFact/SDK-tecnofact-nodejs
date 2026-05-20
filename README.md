@@ -44,7 +44,7 @@ SDK oficial de Node.js/TypeScript para la integración con el servicio de Timbra
 
 - **Node.js**: >= 14.0.0
 - **TypeScript**: >= 5.0.0 (opcional, para desarrollo)
-- **Dependencias**: axios, dotenv
+- **Dependencias**: dotenv
 
 ## 📦 Instalación
 
@@ -148,7 +148,7 @@ src/
 │   ├── RateLimitException.ts       # Límite de peticiones
 │   └── ServerException.ts          # Error del servidor
 ├── http/
-│   └── HttpClient.ts          # Cliente HTTP con axios
+│   └── HttpClient.ts          # Cliente HTTP con fetch
 └── models/
     ├── Emisor.ts              # Datos del emisor
     ├── Receptor.ts            # Datos del receptor

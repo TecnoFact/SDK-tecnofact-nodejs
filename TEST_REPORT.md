@@ -142,7 +142,7 @@ RUN npm ci --ignore-scripts && npm run build
 - ✅ Error 429 → RateLimitException
 - ✅ Error 500 → ServerException
 - ✅ Otros errores HTTP → TecnoFactException
-- ✅ Errores no-axios → TecnoFactException
+- ✅ Errores no-HTTP → TecnoFactException
 - ✅ Errores desconocidos → TecnoFactException
 
 ### Modelos (Tests completos)
@@ -232,7 +232,7 @@ npm run test:watch
 3. ✅ **84% de cobertura** de branches (supera umbral)
 4. ✅ **85% de cobertura** de lines (supera umbral)
 5. ✅ Tests bien organizados por módulo
-6. ✅ Uso de mocks apropiado (axios en HttpClient)
+6. ✅ Uso de mocks apropiado (fetch en HttpClient)
 7. ✅ Tests ejecutables en Docker
 8. ✅ Cobertura completa de modelos principales
 9. ✅ Manejo exhaustivo de errores HTTP

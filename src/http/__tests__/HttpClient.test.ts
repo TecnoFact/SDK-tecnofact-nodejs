@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { HttpClient } from '../HttpClient';
 import { Config } from '../../config';
 import { Environment } from '../../enums';
@@ -11,13 +10,10 @@ import {
   TecnoFactException,
 } from '../../exceptions';
 
-jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
-
 describe('HttpClient', () => {
   let config: Config;
   let httpClient: HttpClient;
-  let mockAxiosInstance: any;
+  const mockFetch = jest.fn();
 
   beforeEach(() => {
     config = new Config({
@@ -25,15 +21,7 @@ describe('HttpClient', () => {
       apiSecret: 'test-secret',
       environment: Environment.SANDBOX,
     });
-
-    mockAxiosInstance = {
-      post: jest.fn(),
-      get: jest.fn(),
-      put: jest.fn(),
-      delete: jest.fn(),
-    };
-
-    mockedAxios.create.mockReturnValue(mockAxiosInstance as any);
+    global.fetch = mockFetch;
     httpClient = new HttpClient(config);
   });
 
@@ -42,45 +30,70 @@ describe('HttpClient', () => {
   });
 
   describe('constructor', () => {
-    it('should create axios instance with correct config', () => {
-      expect(mockedAxios.create).toHaveBeenCalledWith({
-        baseURL: 'https://sandbox.tecnofact.com/api',
-        timeout: 30000,
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          'X-API-Key': 'test-key',
-          'X-API-Secret': 'test-secret',
-        },
+    it('should use correct base URL and default headers in requests', async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => ({ success: true }),
       });
+
+      await httpClient.post('endpoint', { test: 'data' });
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://sandbox.tecnofact.com/api/endpoint',
+        expect.objectContaining({
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            'X-API-Key': 'test-key',
+            'X-API-Secret': 'test-secret',
+          },
+          body: JSON.stringify({ test: 'data' }),
+        })
+      );
     });
   });
 
   describe('post', () => {
     it('should make POST request and return data', async () => {
       const responseData = { success: true, id: '123' };
-      mockAxiosInstance.post.mockResolvedValue({ data: responseData });
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => responseData,
+      });
 
       const result = await httpClient.post('endpoint', { test: 'data' });
 
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/endpoint',
-        { test: 'data' },
-        { headers: undefined }
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://sandbox.tecnofact.com/api/endpoint',
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify({ test: 'data' }),
+        })
       );
       expect(result).toEqual(responseData);
     });
 
     it('should handle custom headers', async () => {
       const responseData = { success: true };
-      mockAxiosInstance.post.mockResolvedValue({ data: responseData });
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => responseData,
+      });
 
       await httpClient.post('endpoint', {}, { 'Custom-Header': 'value' });
 
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith(
-        '/endpoint',
-        {},
-        { headers: { 'Custom-Header': 'value' } }
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://sandbox.tecnofact.com/api/endpoint',
+        expect.objectContaining({
+          method: 'POST',
+          headers: expect.objectContaining({
+            'Custom-Header': 'value',
+          }),
+        })
       );
     });
   });
@@ -88,13 +101,19 @@ describe('HttpClient', () => {
   describe('get', () => {
     it('should make GET request and return data', async () => {
       const responseData = { items: [] };
-      mockAxiosInstance.get.mockResolvedValue({ data: responseData });
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => responseData,
+      });
 
       const result = await httpClient.get('endpoint', { page: 1 });
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith(
-        '/endpoint',
-        { params: { page: 1 }, headers: undefined }
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://sandbox.tecnofact.com/api/endpoint?page=1',
+        expect.objectContaining({
+          method: 'GET',
+        })
       );
       expect(result).toEqual(responseData);
     });
@@ -103,14 +122,20 @@ describe('HttpClient', () => {
   describe('put', () => {
     it('should make PUT request and return data', async () => {
       const responseData = { updated: true };
-      mockAxiosInstance.put.mockResolvedValue({ data: responseData });
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => responseData,
+      });
 
       const result = await httpClient.put('endpoint', { name: 'test' });
 
-      expect(mockAxiosInstance.put).toHaveBeenCalledWith(
-        '/endpoint',
-        { name: 'test' },
-        { headers: undefined }
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://sandbox.tecnofact.com/api/endpoint',
+        expect.objectContaining({
+          method: 'PUT',
+          body: JSON.stringify({ name: 'test' }),
+        })
       );
       expect(result).toEqual(responseData);
     });
@@ -119,13 +144,19 @@ describe('HttpClient', () => {
   describe('delete', () => {
     it('should make DELETE request and return data', async () => {
       const responseData = { deleted: true };
-      mockAxiosInstance.delete.mockResolvedValue({ data: responseData });
+      mockFetch.mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => responseData,
+      });
 
       const result = await httpClient.delete('endpoint');
 
-      expect(mockAxiosInstance.delete).toHaveBeenCalledWith(
-        '/endpoint',
-        { headers: undefined }
+      expect(mockFetch).toHaveBeenCalledWith(
+        'https://sandbox.tecnofact.com/api/endpoint',
+        expect.objectContaining({
+          method: 'DELETE',
+        })
       );
       expect(result).toEqual(responseData);
     });
@@ -133,15 +164,11 @@ describe('HttpClient', () => {
 
   describe('error handling', () => {
     it('should throw AuthenticationException on 401', async () => {
-      const error = {
-        response: {
-          status: 401,
-          data: { message: 'Unauthorized' },
-        },
-        isAxiosError: true,
-      };
-      mockAxiosInstance.post.mockRejectedValue(error);
-      mockedAxios.isAxiosError.mockReturnValue(true);
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 401,
+        json: async () => ({ message: 'Unauthorized' }),
+      });
 
       await expect(httpClient.post('endpoint', {})).rejects.toThrow(
         AuthenticationException
@@ -149,15 +176,11 @@ describe('HttpClient', () => {
     });
 
     it('should throw ValidationException on 400', async () => {
-      const error = {
-        response: {
-          status: 400,
-          data: { message: 'Bad request' },
-        },
-        isAxiosError: true,
-      };
-      mockAxiosInstance.post.mockRejectedValue(error);
-      mockedAxios.isAxiosError.mockReturnValue(true);
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 400,
+        json: async () => ({ message: 'Bad request' }),
+      });
 
       await expect(httpClient.post('endpoint', {})).rejects.toThrow(
         ValidationException
@@ -165,15 +188,11 @@ describe('HttpClient', () => {
     });
 
     it('should throw NotFoundException on 404', async () => {
-      const error = {
-        response: {
-          status: 404,
-          data: { message: 'Not found' },
-        },
-        isAxiosError: true,
-      };
-      mockAxiosInstance.get.mockRejectedValue(error);
-      mockedAxios.isAxiosError.mockReturnValue(true);
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 404,
+        json: async () => ({ message: 'Not found' }),
+      });
 
       await expect(httpClient.get('endpoint')).rejects.toThrow(
         NotFoundException
@@ -181,15 +200,11 @@ describe('HttpClient', () => {
     });
 
     it('should throw RateLimitException on 429', async () => {
-      const error = {
-        response: {
-          status: 429,
-          data: { message: 'Too many requests' },
-        },
-        isAxiosError: true,
-      };
-      mockAxiosInstance.post.mockRejectedValue(error);
-      mockedAxios.isAxiosError.mockReturnValue(true);
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 429,
+        json: async () => ({ message: 'Too many requests' }),
+      });
 
       await expect(httpClient.post('endpoint', {})).rejects.toThrow(
         RateLimitException
@@ -197,15 +212,11 @@ describe('HttpClient', () => {
     });
 
     it('should throw ServerException on 500', async () => {
-      const error = {
-        response: {
-          status: 500,
-          data: { message: 'Internal server error' },
-        },
-        isAxiosError: true,
-      };
-      mockAxiosInstance.post.mockRejectedValue(error);
-      mockedAxios.isAxiosError.mockReturnValue(true);
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 500,
+        json: async () => ({ message: 'Internal server error' }),
+      });
 
       await expect(httpClient.post('endpoint', {})).rejects.toThrow(
         ServerException
@@ -213,25 +224,19 @@ describe('HttpClient', () => {
     });
 
     it('should throw TecnoFactException on other status codes', async () => {
-      const error = {
-        response: {
-          status: 418,
-          data: { message: "I'm a teapot" },
-        },
-        isAxiosError: true,
-      };
-      mockAxiosInstance.post.mockRejectedValue(error);
-      mockedAxios.isAxiosError.mockReturnValue(true);
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 418,
+        json: async () => ({ message: "I'm a teapot" }),
+      });
 
       await expect(httpClient.post('endpoint', {})).rejects.toThrow(
         TecnoFactException
       );
     });
 
-    it('should throw TecnoFactException on non-axios errors', async () => {
-      const error = new Error('Network error');
-      mockAxiosInstance.post.mockRejectedValue(error);
-      mockedAxios.isAxiosError.mockReturnValue(false);
+    it('should throw TecnoFactException on network errors', async () => {
+      mockFetch.mockRejectedValue(new Error('Network error'));
 
       await expect(httpClient.post('endpoint', {})).rejects.toThrow(
         TecnoFactException
@@ -239,8 +244,7 @@ describe('HttpClient', () => {
     });
 
     it('should throw TecnoFactException on unknown errors', async () => {
-      mockAxiosInstance.post.mockRejectedValue('unknown');
-      mockedAxios.isAxiosError.mockReturnValue(false);
+      mockFetch.mockRejectedValue('unknown');
 
       await expect(httpClient.post('endpoint', {})).rejects.toThrow(
         'Unknown error occurred'

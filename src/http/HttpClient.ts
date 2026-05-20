@@ -1,4 +1,3 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
 import { Config } from '../config';
 import { IHttpClient } from '../contracts';
 import {
@@ -13,32 +12,62 @@ import {
 export class HttpClient implements IHttpClient {
   private readonly baseUrl: string;
   private readonly timeout: number;
-  private readonly axiosInstance: AxiosInstance;
+  private readonly defaultHeaders: Record<string, string>;
 
   constructor(config: Config) {
     this.baseUrl = config.getBaseUrl();
     this.timeout = config.getTimeout();
-
-    this.axiosInstance = axios.create({
-      baseURL: this.baseUrl,
-      timeout: this.timeout,
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-API-Key': config.getApiKey(),
-        'X-API-Secret': config.getApiSecret(),
-      },
-    });
+    this.defaultHeaders = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'X-API-Key': config.getApiKey(),
+      'X-API-Secret': config.getApiSecret(),
+    };
   }
 
-  private handleResponse<T>(response: AxiosResponse): T {
-    return response.data;
+  private async request<T>(endpoint: string, options: RequestInit): Promise<T> {
+    const url = `${this.baseUrl}/${endpoint.replace(/^\//, '')}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          ...this.defaultHeaders,
+          ...(options.headers || {}),
+        } as Record<string, string>,
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        const error = new Error('Request failed');
+        (error as any).response = {
+          status: response.status,
+          data,
+        };
+        throw error;
+      }
+
+      if (response.status === 204) {
+        return undefined as T;
+      }
+
+      return (await response.json()) as T;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      return this.handleError(error);
+    }
   }
 
   private handleError(error: unknown): never {
-    if (axios.isAxiosError(error) && error.response) {
-      const { status, data } = error.response;
-      const message = (data as Record<string, unknown>)?.message as string || 'Request failed';
+    const axiosLikeError = error as any;
+    if (axiosLikeError?.response) {
+      const { status, data } = axiosLikeError.response;
+      const message =
+        ((data as Record<string, unknown>)?.message as string) || 'Request failed';
       const details = data as Record<string, unknown>;
 
       switch (status) {
@@ -49,16 +78,32 @@ export class HttpClient implements IHttpClient {
             details
           );
         case 400:
-          throw new ValidationException(message || 'Validation error', status, details);
+          throw new ValidationException(
+            message || 'Validation error',
+            status,
+            details
+          );
         case 404:
-          throw new NotFoundException(message || 'Resource not found', status, details);
+          throw new NotFoundException(
+            message || 'Resource not found',
+            status,
+            details
+          );
         case 429:
-          throw new RateLimitException(message || 'Rate limit exceeded', status, details);
+          throw new RateLimitException(
+            message || 'Rate limit exceeded',
+            status,
+            details
+          );
         case 500:
         case 502:
         case 503:
         case 504:
-          throw new ServerException(message || 'Server error', status, details);
+          throw new ServerException(
+            message || 'Server error',
+            status,
+            details
+          );
         default:
           throw new TecnoFactException(message, status, details);
       }
@@ -76,13 +121,11 @@ export class HttpClient implements IHttpClient {
     data: Record<string, unknown>,
     headers?: Record<string, string>
   ): Promise<T> {
-    try {
-      const url = `/${endpoint.replace(/^\//, '')}`;
-      const response = await this.axiosInstance.post<T>(url, data, { headers });
-      return this.handleResponse<T>(response);
-    } catch (error) {
-      return this.handleError(error);
-    }
+    return this.request<T>(endpoint, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers,
+    });
   }
 
   async get<T = unknown>(
@@ -90,13 +133,23 @@ export class HttpClient implements IHttpClient {
     params?: Record<string, unknown>,
     headers?: Record<string, string>
   ): Promise<T> {
-    try {
-      const url = `/${endpoint.replace(/^\//, '')}`;
-      const response = await this.axiosInstance.get<T>(url, { params, headers });
-      return this.handleResponse<T>(response);
-    } catch (error) {
-      return this.handleError(error);
+    let url = endpoint;
+    if (params && Object.keys(params).length > 0) {
+      const queryParams = new URLSearchParams();
+      for (const [key, value] of Object.entries(params)) {
+        if (value !== undefined && value !== null) {
+          queryParams.append(key, String(value));
+        }
+      }
+      const queryString = queryParams.toString();
+      if (queryString) {
+        url = `${endpoint}?${queryString}`;
+      }
     }
+    return this.request<T>(url, {
+      method: 'GET',
+      headers,
+    });
   }
 
   async put<T = unknown>(
@@ -104,25 +157,20 @@ export class HttpClient implements IHttpClient {
     data: Record<string, unknown>,
     headers?: Record<string, string>
   ): Promise<T> {
-    try {
-      const url = `/${endpoint.replace(/^\//, '')}`;
-      const response = await this.axiosInstance.put<T>(url, data, { headers });
-      return this.handleResponse<T>(response);
-    } catch (error) {
-      return this.handleError(error);
-    }
+    return this.request<T>(endpoint, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+      headers,
+    });
   }
 
   async delete<T = unknown>(
     endpoint: string,
     headers?: Record<string, string>
   ): Promise<T> {
-    try {
-      const url = `/${endpoint.replace(/^\//, '')}`;
-      const response = await this.axiosInstance.delete<T>(url, { headers });
-      return this.handleResponse<T>(response);
-    } catch (error) {
-      return this.handleError(error);
-    }
+    return this.request<T>(endpoint, {
+      method: 'DELETE',
+      headers,
+    });
   }
 }
