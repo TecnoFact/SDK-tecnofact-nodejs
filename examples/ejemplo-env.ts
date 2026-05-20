@@ -12,8 +12,15 @@ function ejemploConEnv(): void {
     timeout: parseInt(process.env.TECNOFACT_TIMEOUT || '30000', 10),
   });
 
+  const configObject = config.toObject();
+  const safeConfigObject = {
+    ...configObject,
+    apiKey: '[REDACTED]',
+    apiSecret: '[REDACTED]',
+  };
+
   console.log('Configuración desde variables de entorno:');
-  console.log(JSON.stringify(config.toObject(), null, 2));
+  console.log(JSON.stringify(safeConfigObject, null, 2));
 }
 
 ejemploConEnv();
