@@ -1,25 +1,28 @@
+/**
+ * Entornos soportados por el SDK.
+ *
+ * Alineado a la contraparte PHP (TecnoFact\Sdk\Enums\Environment). Sandbox NO
+ * está disponible por ahora, por lo que se expone únicamente PRODUCTION.
+ */
 export enum Environment {
-  SANDBOX = 'sandbox',
   PRODUCTION = 'production',
 }
 
+/**
+ * Helpers de entorno. Se conservan por compatibilidad con los puntos de llamada
+ * existentes, pero reflejan el contrato actual (sin sandbox).
+ */
 export class EnvironmentHelper {
   private static readonly labels: Record<Environment, string> = {
-    [Environment.SANDBOX]: 'Sandbox',
     [Environment.PRODUCTION]: 'Producción',
   };
 
   private static readonly baseUrls: Record<Environment, string> = {
-    [Environment.SANDBOX]: 'https://sandbox.tecnofact.com/api',
-    [Environment.PRODUCTION]: 'https://api.tecnofact.com/api',
+    [Environment.PRODUCTION]: 'https://panelcfdi.tecnofact.mx',
   };
 
   static isProduction(env: Environment): boolean {
     return env === Environment.PRODUCTION;
-  }
-
-  static isSandbox(env: Environment): boolean {
-    return env === Environment.SANDBOX;
   }
 
   static getLabel(env: Environment): string {
@@ -28,5 +31,19 @@ export class EnvironmentHelper {
 
   static getBaseUrl(env: Environment): string {
     return this.baseUrls[env];
+  }
+
+  /**
+   * Resuelve un Environment a partir de un string (p.ej. leído de variables
+   * de entorno). Lanza si el valor no corresponde a un entorno soportado.
+   */
+  static fromValue(value: string): Environment {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === Environment.PRODUCTION) {
+      return Environment.PRODUCTION;
+    }
+    throw new Error(
+      `Entorno inválido (invalid) o no soportado: "${value}". Entornos válidos: production.`
+    );
   }
 }

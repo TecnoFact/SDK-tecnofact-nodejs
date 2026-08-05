@@ -1,4 +1,7 @@
+import { CuentaPredial } from './CuentaPredial';
 import { ImpuestosConcepto } from './ImpuestosConcepto';
+import { InformacionAduanera } from './InformacionAduanera';
+import { Parte } from './Parte';
 
 export interface ConceptoData {
   claveProdServ: string;
@@ -12,6 +15,9 @@ export interface ConceptoData {
   noIdentificacion?: string;
   unidad?: string;
   descuento?: number | string;
+  cuentaPredial?: CuentaPredial;
+  partes?: Parte[];
+  informacionAduanera?: InformacionAduanera;
 }
 
 export class Concepto {
@@ -26,6 +32,9 @@ export class Concepto {
   private readonly noIdentificacion?: string;
   private readonly unidad?: string;
   private readonly descuento?: number | string;
+  private readonly cuentaPredial?: CuentaPredial;
+  private readonly partes?: Parte[];
+  private readonly informacionAduanera?: InformacionAduanera;
 
   constructor(data: ConceptoData) {
     this.claveProdServ = data.claveProdServ;
@@ -39,6 +48,65 @@ export class Concepto {
     this.noIdentificacion = data.noIdentificacion;
     this.unidad = data.unidad;
     this.descuento = data.descuento;
+    this.cuentaPredial = data.cuentaPredial;
+    this.partes = data.partes;
+    this.informacionAduanera = data.informacionAduanera;
+  }
+
+  getClaveProdServ(): string {
+    return this.claveProdServ;
+  }
+
+  getCantidad(): number | string {
+    return this.cantidad;
+  }
+
+  getClaveUnidad(): string {
+    return this.claveUnidad;
+  }
+
+  getUnidad(): string | null {
+    return this.unidad ?? null;
+  }
+
+  getDescripcion(): string {
+    return this.descripcion;
+  }
+
+  getValorUnitario(): number | string {
+    return this.valorUnitario;
+  }
+
+  getImporte(): number | string {
+    return this.importe;
+  }
+
+  getObjetoImp(): string {
+    return this.objetoImp;
+  }
+
+  getImpuestos(): ImpuestosConcepto | null {
+    return this.impuestos ?? null;
+  }
+
+  getNoIdentificacion(): string | null {
+    return this.noIdentificacion ?? null;
+  }
+
+  getCuentaPredial(): CuentaPredial | null {
+    return this.cuentaPredial ?? null;
+  }
+
+  getPartes(): Parte[] | null {
+    return this.partes ?? null;
+  }
+
+  getInformacionAduanera(): InformacionAduanera | null {
+    return this.informacionAduanera ?? null;
+  }
+
+  getDescuento(): number | string | null {
+    return this.descuento ?? null;
   }
 
   toObject(): Record<string, unknown> {
@@ -63,6 +131,15 @@ export class Concepto {
     }
     if (this.descuento) {
       obj.descuento = this.descuento;
+    }
+    if (this.cuentaPredial) {
+      obj.cuenta_predial = this.cuentaPredial.toObject();
+    }
+    if (this.partes) {
+      obj.partes = this.partes.map((p) => p.toObject());
+    }
+    if (this.informacionAduanera) {
+      obj.informacion_aduanera = this.informacionAduanera.toObject();
     }
 
     return obj;

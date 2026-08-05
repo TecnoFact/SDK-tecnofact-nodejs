@@ -39,6 +39,22 @@ export class Receptor {
     return this.usoCfdi;
   }
 
+  getDomicilioFiscalReceptor(): string {
+    return this.domicilioFiscalReceptor;
+  }
+
+  getRegimenFiscalReceptor(): string {
+    return this.regimenFiscalReceptor;
+  }
+
+  getResidenciaFiscal(): string | null {
+    return this.residenciaFiscal ?? null;
+  }
+
+  getNumRegIdTrib(): string | null {
+    return this.numRegIdTrib ?? null;
+  }
+
   toObject(): Record<string, unknown> {
     const obj: Record<string, unknown> = {
       rfc: this.rfc,

@@ -1,59 +1,56 @@
 import { TecnoFactException } from '../TecnoFactException';
 
 describe('TecnoFactException', () => {
-  it('should create exception with message only', () => {
+  it('crea la excepción solo con mensaje y aplica defaults', () => {
     const exception = new TecnoFactException('Test error');
-    
+
     expect(exception.message).toBe('Test error');
-    expect(exception.code).toBeUndefined();
+    expect(exception.code).toBe(0);
+    expect(exception.getRequestId()).toBeNull();
+    expect(exception.getPrevious()).toBeNull();
     expect(exception.details).toEqual({});
+    expect(exception.getDetails()).toEqual({});
   });
 
-  it('should create exception with message and code', () => {
+  it('acepta message y code', () => {
     const exception = new TecnoFactException('Test error', 400);
-    
+
     expect(exception.message).toBe('Test error');
     expect(exception.code).toBe(400);
-    expect(exception.details).toEqual({});
+    expect(exception.getRequestId()).toBeNull();
   });
 
-  it('should create exception with message, code and details', () => {
-    const details = { field: 'email', reason: 'invalid format' };
-    const exception = new TecnoFactException('Validation error', 400, details);
-    
-    expect(exception.message).toBe('Validation error');
-    expect(exception.code).toBe(400);
-    expect(exception.details).toEqual(details);
+  it('acepta previous y requestId', () => {
+    const cause = new Error('boom');
+    const exception = new TecnoFactException('wrapped', 500, cause, 'req-123');
+
+    expect(exception.code).toBe(500);
+    expect(exception.getPrevious()).toBe(cause);
+    expect(exception.getRequestId()).toBe('req-123');
   });
 
-  it('should return formatted string with code', () => {
+  it('getRequestId devuelve null cuando se omite', () => {
+    const exception = new TecnoFactException('Test', 500);
+    expect(exception.getRequestId()).toBeNull();
+  });
+
+  it('toString incluye el código cuando está presente', () => {
     const exception = new TecnoFactException('Test error', 500);
-    
     expect(exception.toString()).toBe('[500] Test error');
   });
 
-  it('should return message only when no code', () => {
+  it('toString devuelve solo el mensaje cuando no hay código', () => {
     const exception = new TecnoFactException('Test error');
-    
     expect(exception.toString()).toBe('Test error');
   });
 
-  it('should return details via getDetails method', () => {
-    const details = { key: 'value' };
-    const exception = new TecnoFactException('Test', 400, details);
-    
-    expect(exception.getDetails()).toEqual(details);
-  });
-
-  it('should be instance of Error', () => {
+  it('es instancia de Error', () => {
     const exception = new TecnoFactException('Test');
-    
     expect(exception).toBeInstanceOf(Error);
   });
 
-  it('should have correct name', () => {
+  it('tiene el nombre correcto', () => {
     const exception = new TecnoFactException('Test');
-    
     expect(exception.name).toBe('TecnoFactException');
   });
 });

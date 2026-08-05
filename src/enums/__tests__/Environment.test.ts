@@ -2,56 +2,54 @@ import { Environment, EnvironmentHelper } from '../Environment';
 
 describe('Environment', () => {
   describe('enum values', () => {
-    it('should have SANDBOX value', () => {
-      expect(Environment.SANDBOX).toBe('sandbox');
-    });
-
-    it('should have PRODUCTION value', () => {
+    it('PRODUCTION vale "production"', () => {
       expect(Environment.PRODUCTION).toBe('production');
     });
   });
 
   describe('EnvironmentHelper', () => {
     describe('isProduction', () => {
-      it('should return true for PRODUCTION environment', () => {
+      it('devuelve true para PRODUCTION', () => {
         expect(EnvironmentHelper.isProduction(Environment.PRODUCTION)).toBe(true);
-      });
-
-      it('should return false for SANDBOX environment', () => {
-        expect(EnvironmentHelper.isProduction(Environment.SANDBOX)).toBe(false);
-      });
-    });
-
-    describe('isSandbox', () => {
-      it('should return true for SANDBOX environment', () => {
-        expect(EnvironmentHelper.isSandbox(Environment.SANDBOX)).toBe(true);
-      });
-
-      it('should return false for PRODUCTION environment', () => {
-        expect(EnvironmentHelper.isSandbox(Environment.PRODUCTION)).toBe(false);
       });
     });
 
     describe('getLabel', () => {
-      it('should return correct label for SANDBOX', () => {
-        expect(EnvironmentHelper.getLabel(Environment.SANDBOX)).toBe('Sandbox');
-      });
-
-      it('should return correct label for PRODUCTION', () => {
+      it('devuelve "Producción" para PRODUCTION', () => {
         expect(EnvironmentHelper.getLabel(Environment.PRODUCTION)).toBe('Producción');
       });
     });
 
     describe('getBaseUrl', () => {
-      it('should return sandbox URL for SANDBOX environment', () => {
-        const url = EnvironmentHelper.getBaseUrl(Environment.SANDBOX);
-        expect(url).toBe('https://sandbox.tecnofact.com/api');
+      it('devuelve la URL de producción sin sufijo /api', () => {
+        expect(EnvironmentHelper.getBaseUrl(Environment.PRODUCTION)).toBe(
+          'https://panelcfdi.tecnofact.mx'
+        );
+      });
+    });
+
+    describe('fromValue', () => {
+      it('resuelve "production" a Environment.PRODUCTION', () => {
+        expect(EnvironmentHelper.fromValue('production')).toBe(Environment.PRODUCTION);
       });
 
-      it('should return production URL for PRODUCTION environment', () => {
-        const url = EnvironmentHelper.getBaseUrl(Environment.PRODUCTION);
-        expect(url).toBe('https://api.tecnofact.com/api');
+      it('es insensible a mayúsculas/espacios', () => {
+        expect(EnvironmentHelper.fromValue(' Production ')).toBe(Environment.PRODUCTION);
       });
+
+      it('lanza para "sandbox" (entorno no disponible)', () => {
+        expect(() => EnvironmentHelper.fromValue('sandbox')).toThrow(/invalid|unknown/i);
+      });
+
+      it('lanza para valores desconocidos', () => {
+        expect(() => EnvironmentHelper.fromValue('foo')).toThrow(/invalid|unknown/i);
+      });
+    });
+  });
+
+  describe('Environment enum (paridad PHP)', () => {
+    it('no expone SANDBOX', () => {
+      expect((Environment as unknown as Record<string, unknown>).SANDBOX).toBeUndefined();
     });
   });
 });

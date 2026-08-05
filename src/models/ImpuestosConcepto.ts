@@ -15,6 +15,14 @@ export class ImpuestosConcepto {
     this.retenciones = data.retenciones;
   }
 
+  getTraslados(): Traslado[] {
+    return this.traslados ?? [];
+  }
+
+  getRetenciones(): Retencion[] {
+    return this.retenciones ?? [];
+  }
+
   toObject(): Record<string, unknown> {
     const obj: Record<string, unknown> = {};
 

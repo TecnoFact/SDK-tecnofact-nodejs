@@ -1,5 +1,5 @@
-import { TrasladoGlobal } from './TrasladoGlobal';
 import { RetencionGlobal } from './RetencionGlobal';
+import { TrasladoGlobal } from './TrasladoGlobal';
 
 export interface ImpuestosData {
   totalImpuestosTrasladados?: number | string;
@@ -19,6 +19,22 @@ export class Impuestos {
     this.totalImpuestosRetenidos = data.totalImpuestosRetenidos;
     this.traslados = data.traslados;
     this.retenciones = data.retenciones;
+  }
+
+  getTotalImpuestosRetenidos(): number | string | null {
+    return this.totalImpuestosRetenidos ?? null;
+  }
+
+  getTotalImpuestosTrasladados(): number | string | null {
+    return this.totalImpuestosTrasladados ?? null;
+  }
+
+  getTraslados(): TrasladoGlobal[] | null {
+    return this.traslados ?? null;
+  }
+
+  getRetenciones(): RetencionGlobal[] | null {
+    return this.retenciones ?? null;
   }
 
   toObject(): Record<string, unknown> {

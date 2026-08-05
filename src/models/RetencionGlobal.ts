@@ -12,6 +12,14 @@ export class RetencionGlobal {
     this.importe = data.importe;
   }
 
+  getImpuesto(): string {
+    return this.impuesto;
+  }
+
+  getImporte(): number | string {
+    return this.importe;
+  }
+
   toObject(): Record<string, unknown> {
     return {
       impuesto: this.impuesto,

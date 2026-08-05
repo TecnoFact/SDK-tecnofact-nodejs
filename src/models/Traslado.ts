@@ -2,7 +2,7 @@ export interface TrasladoData {
   base: number | string;
   impuesto: string;
   tipoFactor: string;
-  tasaOCuota: number | string;
+  tasaOCuota?: number | string;
   importe: number | string;
 }
 
@@ -10,7 +10,7 @@ export class Traslado {
   private readonly base: number | string;
   private readonly impuesto: string;
   private readonly tipoFactor: string;
-  private readonly tasaOCuota: number | string;
+  private readonly tasaOCuota?: number | string;
   private readonly importe: number | string;
 
   constructor(data: TrasladoData) {
@@ -19,6 +19,26 @@ export class Traslado {
     this.tipoFactor = data.tipoFactor;
     this.tasaOCuota = data.tasaOCuota;
     this.importe = data.importe;
+  }
+
+  getBase(): number | string {
+    return this.base;
+  }
+
+  getImpuesto(): string {
+    return this.impuesto;
+  }
+
+  getTipoFactor(): string {
+    return this.tipoFactor;
+  }
+
+  getTasaOCuota(): number | string | null {
+    return this.tasaOCuota ?? null;
+  }
+
+  getImporte(): number | string {
+    return this.importe;
   }
 
   toObject(): Record<string, unknown> {

@@ -1,21 +1,47 @@
+/**
+ * Contrato del cliente HTTP, alineado a la contraparte PHP
+ * (TecnoFact\Sdk\Http\HttpClientInterface).
+ *
+ * Orden de parámetros por paridad con PHP:
+ *   get(endpoint, headers, query)
+ *   post(endpoint, headers, data)
+ *   postMultipart(endpoint, headers, fields)
+ *   put(endpoint, headers, data)
+ *   delete(endpoint, headers, data)
+ *
+ * Nota: `endpoint` es la URL ya construida por el Service (patrón PHP);
+ * el HttpClient la usa tal cual, SIN anteponer baseUrl. La implementación
+ * (HttpClient) recibe `Config` en su constructor y la usa para timeout,
+ * retries, verifySsl, etc.
+ */
 export interface IHttpClient {
-  post<T = unknown>(
+  get<T = Record<string, unknown>>(
     endpoint: string,
-    data: Record<string, unknown>,
-    headers?: Record<string, string>
+    headers?: Record<string, string>,
+    query?: Record<string, unknown>
   ): Promise<T>;
 
-  get<T = unknown>(
+  post<T = Record<string, unknown>>(
     endpoint: string,
-    params?: Record<string, unknown>,
-    headers?: Record<string, string>
+    headers?: Record<string, string>,
+    data?: Record<string, unknown>
   ): Promise<T>;
 
-  put<T = unknown>(
+  postMultipart<T = Record<string, unknown>>(
     endpoint: string,
-    data: Record<string, unknown>,
-    headers?: Record<string, string>
+    headers?: Record<string, string>,
+    fields?: Record<string, unknown>
   ): Promise<T>;
 
-  delete<T = unknown>(endpoint: string, headers?: Record<string, string>): Promise<T>;
+  put<T = Record<string, unknown>>(
+    endpoint: string,
+    headers?: Record<string, string>,
+    data?: Record<string, unknown>
+  ): Promise<T>;
+
+  delete<T = Record<string, unknown>>(
+    endpoint: string,
+    headers?: Record<string, string>,
+    data?: Record<string, unknown>
+  ): Promise<T>;
 }

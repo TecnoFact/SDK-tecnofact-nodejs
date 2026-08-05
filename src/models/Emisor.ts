@@ -3,6 +3,7 @@ export interface EmisorData {
   nombre: string;
   regimenFiscal: string;
   cp: string;
+  facAtrAdm?: string;
 }
 
 export class Emisor {
@@ -10,12 +11,14 @@ export class Emisor {
   private readonly nombre: string;
   private readonly regimenFiscal: string;
   private readonly cp: string;
+  private readonly facAtrAdm?: string;
 
   constructor(data: EmisorData) {
     this.rfc = data.rfc;
     this.nombre = data.nombre;
     this.regimenFiscal = data.regimenFiscal;
     this.cp = data.cp;
+    this.facAtrAdm = data.facAtrAdm;
   }
 
   getRfc(): string {
@@ -34,12 +37,22 @@ export class Emisor {
     return this.cp;
   }
 
+  getFacAtrAdm(): string | null {
+    return this.facAtrAdm ?? null;
+  }
+
   toObject(): Record<string, unknown> {
-    return {
+    const obj: Record<string, unknown> = {
       rfc: this.rfc,
       nombre: this.nombre,
       regimen_fiscal: this.regimenFiscal,
       cp: this.cp,
     };
+
+    if (this.facAtrAdm) {
+      obj.facAtrAdm = this.facAtrAdm;
+    }
+
+    return obj;
   }
 }

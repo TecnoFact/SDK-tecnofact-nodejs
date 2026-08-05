@@ -90,16 +90,16 @@ npm run dev
 import { Config, Environment } from '@tecnofact/sdk-nodejs';
 
 const config = new Config({
-  apiKey: 'TU_API_KEY',
-  apiSecret: 'TU_API_SECRET',
-  environment: Environment.SANDBOX,
-  timeout: 30000,
+  email: 'tu_email@tudominio.com',
+  password: 'tu_password',
+  environment: Environment.PRODUCTION,
+  timeout: 30,
   retries: 3,
 });
 
 console.log(`Entorno: ${config.getEnvironment()}`);
 console.log(`URL Base: ${config.getBaseUrl()}`);
-console.log(`Timeout: ${config.getTimeout()} ms`);
+console.log(`Timeout: ${config.getTimeout()} s`);
 ```
 
 ### Variables de Entorno
@@ -107,24 +107,25 @@ console.log(`Timeout: ${config.getTimeout()} ms`);
 Crea un archivo `.env`:
 
 ```env
-TECNOFACT_API_KEY=tu_api_key
-TECNOFACT_API_SECRET=tu_api_secret
-TECNOFACT_ENVIRONMENT=sandbox
-TECNOFACT_TIMEOUT=30000
+TECN_FACT_EMAIL=tu_email@tudominio.com
+TECN_FACT_PASSWORD=tu_password
+TECN_FACT_ENVIRONMENT=production
+TECN_FACT_TIMEOUT=30
+TECN_FACT_RETRIES=3
+# TECN_FACT_VERIFY_SSL=true
 ```
 
 ```typescript
 import * as dotenv from 'dotenv';
-import { Config, Environment } from '@tecnofact/sdk-nodejs';
+import { Config } from '@tecnofact/sdk-nodejs';
 
 dotenv.config();
 
-const config = new Config({
-  apiKey: process.env.TECNOFACT_API_KEY || '',
-  apiSecret: process.env.TECNOFACT_API_SECRET || '',
-  environment: (process.env.TECNOFACT_ENVIRONMENT?.toUpperCase() as Environment) || Environment.SANDBOX,
-  timeout: parseInt(process.env.TECNOFACT_TIMEOUT || '30000', 10),
-});
+const config = Config.fromEnvironment();
+
+console.log(`Entorno: ${config.getEnvironment()}`);
+console.log(`URL Base: ${config.getBaseUrl()}`);
+console.log(`Timeout: ${config.getTimeout()} s`);
 ```
 
 ## 🏗️ Estructura del SDK
@@ -136,7 +137,7 @@ src/
 ├── contracts/
 │   └── IHttpClient.ts         # Interfaz para el cliente HTTP
 ├── enums/
-│   ├── Environment.ts         # Entornos (Sandbox/Production)
+│   ├── Environment.ts         # Entornos (Production)
 │   └── TipoComprobante.ts     # Tipos de CFDI
 ├── exceptions/
 │   ├── TecnoFactException.ts       # Excepción base
@@ -149,17 +150,32 @@ src/
 │   └── ServerException.ts          # Error del servidor
 ├── http/
 │   └── HttpClient.ts          # Cliente HTTP con fetch
-└── models/
-    ├── Emisor.ts              # Datos del emisor
-    ├── Receptor.ts            # Datos del receptor
-    ├── Concepto.ts            # Conceptos de factura
-    ├── Cfdi4Request.ts        # Solicitud CFDI 4.0
-    ├── Impuestos.ts           # Impuestos globales
-    ├── ImpuestosConcepto.ts   # Impuestos por concepto
-    ├── Traslado.ts            # Traslado de impuestos
-    ├── TrasladoGlobal.ts      # Traslado global
-    ├── Retencion.ts           # Retención de impuestos
-    └── RetencionGlobal.ts     # Retención global
+├── models/
+│   ├── Emisor.ts              # Datos del emisor
+│   ├── Receptor.ts            # Datos del receptor
+│   ├── Concepto.ts            # Conceptos de factura
+│   ├── Cfdi4Request.ts        # Solicitud CFDI 4.0
+│   ├── PagoRequest.ts         # Solicitud de complemento de pago
+│   ├── Impuestos.ts           # Impuestos globales
+│   ├── ImpuestosConcepto.ts   # Impuestos por concepto
+│   ├── Traslado.ts            # Traslado de impuestos
+│   ├── TrasladoGlobal.ts      # Traslado global
+│   ├── Retencion.ts           # Retención de impuestos
+│   └── RetencionGlobal.ts     # Retención global
+├── responses/
+│   ├── ResultadoTimbrado.ts   # Respuesta de timbrado
+│   ├── EstatusCfdi.ts         # Estatus/validación de CFDI
+│   └── AcuseCancelacion.ts    # Acuse de cancelación
+├── services/
+│   ├── Service.ts             # Base abstracta de servicios
+│   ├── AuthService.ts        # Login / refresh / logout (JWT)
+│   ├── CfdiService.ts        # Timbrado, validación, XML/PDF/HTML
+│   ├── CancelacionService.ts  # Cancelación de CFDI
+│   ├── ConsultasService.ts    # Consultas por RFC/UUID/Serie/SAT
+│   ├── ReportesService.ts     # Reportes y exportaciones
+│   └── ValidacionesService.ts # Validación de XML/RFC/catálogos
+└── xml/
+    └── CfdiXmlBuilder.ts      # Constructor de XML CFDI 4.0 / Pagos 2.0
 ```
 
 ## 💻 Uso Básico
@@ -170,16 +186,16 @@ src/
 import { Config, Environment } from '@tecnofact/sdk-nodejs';
 
 const config = new Config({
-  apiKey: 'TU_API_KEY',
-  apiSecret: 'TU_API_SECRET',
-  environment: Environment.SANDBOX,
-  timeout: 30000,
+  email: 'tu_email@tudominio.com',
+  password: 'tu_password',
+  environment: Environment.PRODUCTION,
+  timeout: 30,
   retries: 3,
 });
 
 console.log(`Entorno: ${config.getEnvironment()}`);
 console.log(`URL Base: ${config.getBaseUrl()}`);
-console.log(`Timeout: ${config.getTimeout()} ms`);
+console.log(`Timeout: ${config.getTimeout()} s`);
 
 // Convertir a objeto
 const data = config.toObject();
@@ -200,9 +216,72 @@ if (env === Environment.PRODUCTION) {
 
 // Métodos del helper
 console.log(EnvironmentHelper.isProduction(env)); // true
-console.log(EnvironmentHelper.isSandbox(env));    // false
 console.log(EnvironmentHelper.getLabel(env));     // 'Producción'
-console.log(EnvironmentHelper.getBaseUrl(env));   // URL de producción
+console.log(EnvironmentHelper.getBaseUrl(env));   // https://panelcfdi.tecnofact.mx
+```
+
+## 🔐 Autenticación
+
+El SDK usa autenticación basada en **email/password + JWT Bearer** gestionado por
+`AuthService`. El flujo típico es:
+
+1. Crear `Config` con `email` y `password` (sin token aún).
+2. Crear un `HttpClient` inyectando esa `Config`.
+3. Llamar a `new AuthService(config, httpClient).login(email, password)`.
+   - El JWT (`access_token`) devuelto se almacena automáticamente en la
+     instancia de `Config` mediante `config.setToken(...)`.
+4. A partir de ese momento, todas las llamadas del resto de servicios
+   (`CfdiService`, `CancelacionService`, etc.) incluyen automáticamente la
+   cabecera `Authorization: Bearer <token>`, ya que extienden la misma
+   `Config`.
+
+> Antes del `login` no se envía `Authorization` (se evita enviar un
+> `Bearer null` inválido). Tras `logout()` el token se limpia de `Config`.
+
+```typescript
+import { Config, HttpClient, AuthService } from '@tecnofact/sdk-nodejs';
+
+const config = new Config({
+  email: 'tu_email@tudominio.com',
+  password: 'tu_password',
+});
+
+const httpClient = new HttpClient(config);
+const auth = new AuthService(config, httpClient);
+
+await auth.login('tu_email@tudominio.com', 'tu_password');
+
+// config.getToken() ahora contiene el JWT; las llamadas siguientes
+// lo incluyen automáticamente como Authorization: Bearer <token>.
+```
+
+## 🧰 Servicios disponibles
+
+Todos los servicios extienden `Service` (inyectan `Config` + `IHttpClient`) y
+se exponen desde la raíz del paquete:
+
+| Servicio | Método principal |
+| --- | --- |
+| `AuthService` | `auth.login(email, password)` |
+| `CfdiService` | `cfdi.timbrar(cfdi)` — también `cfdi.timbrarPago(pagoRequest)`, `cfdi.validar(xml)` |
+| `CancelacionService` | `cancelacion.cancelar(rfc, uuid, motivo)` |
+| `ConsultasService` | `consultas.buscarPorUuid(uuid)` — también por RFC, serie/folio y SAT |
+| `ReportesService` | `reportes.exportarCsv(fechaInicio, fechaFin)` — también Excel, resumen, ventas, cancelaciones |
+| `ValidacionesService` | `validaciones.validarRfc(rfc)` — también XML, no. de certificado y catálogos |
+
+Ejemplo rápido:
+
+```typescript
+import { Config, HttpClient, AuthService, CfdiService } from '@tecnofact/sdk-nodejs';
+
+const config = new Config({ email: 'tu_email@tudominio.com', password: 'tu_password' });
+const httpClient = new HttpClient(config);
+
+await new AuthService(config, httpClient).login('tu_email@tudominio.com', 'tu_password');
+
+const cfdi = new CfdiService(config, httpClient);
+const resultado = await cfdi.timbrar(cfdiRequest);
+console.log(resultado.getUuid(), resultado.getXmlTimbrado());
 ```
 
 ## 📋 Modelos de Datos

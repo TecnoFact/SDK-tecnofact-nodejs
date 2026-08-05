@@ -21,6 +21,26 @@ export class Retencion {
     this.importe = data.importe;
   }
 
+  getBase(): number | string {
+    return this.base;
+  }
+
+  getImpuesto(): string {
+    return this.impuesto;
+  }
+
+  getTipoFactor(): string {
+    return this.tipoFactor;
+  }
+
+  getTasaOCuota(): number | string {
+    return this.tasaOCuota;
+  }
+
+  getImporte(): number | string {
+    return this.importe;
+  }
+
   toObject(): Record<string, unknown> {
     return {
       base: this.base,
