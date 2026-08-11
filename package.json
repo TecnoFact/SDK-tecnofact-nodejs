@@ -1,6 +1,6 @@
 {
   "name": "@tecnofact/sdk-nodejs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "SDK oficial de Node.js para la integración con el servicio de Timbrado CFDI 4.0 de TecnoFact",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -58,7 +58,7 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^25.9.1",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.4",
     "@typescript-eslint/parser": "^8.59.4",
     "eslint": "^10.3.0",
     "eslint-config-prettier": "^10.1.8",

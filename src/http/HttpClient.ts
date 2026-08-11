@@ -227,7 +227,7 @@ export class HttpClient implements IHttpClient {
       if (contents instanceof Blob) {
         formData.append(name, contents);
       } else if (contents instanceof Uint8Array) {
-        formData.append(name, new Blob([contents]));
+        formData.append(name, new Blob([new Uint8Array(contents)]));
       } else {
         formData.append(name, String(contents));
       }
