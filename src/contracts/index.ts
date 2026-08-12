@@ -1,1 +1,1 @@
-export { IHttpClient } from './IHttpClient';
+export type { IHttpClient } from './IHttpClient';

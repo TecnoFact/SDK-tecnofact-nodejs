@@ -1,4 +1,4 @@
-export { Config, ConfigOptions } from './config';
+export { Config, type ConfigOptions } from './config';
 export { Environment, EnvironmentHelper, TipoComprobante, TipoComprobanteHelper } from './enums';
 export {
   TecnoFactException,
@@ -11,53 +11,53 @@ export {
   ServerException,
 } from './exceptions';
 export { HttpClient } from './http';
-export { IHttpClient } from './contracts';
+export type { IHttpClient } from './contracts';
 export {
   Emisor,
-  EmisorData,
+  type EmisorData,
   Receptor,
-  ReceptorData,
+  type ReceptorData,
   Traslado,
-  TrasladoData,
+  type TrasladoData,
   Retencion,
-  RetencionData,
+  type RetencionData,
   ImpuestosConcepto,
-  ImpuestosConceptoData,
+  type ImpuestosConceptoData,
   Concepto,
-  ConceptoData,
+  type ConceptoData,
   TrasladoGlobal,
-  TrasladoGlobalData,
+  type TrasladoGlobalData,
   RetencionGlobal,
-  RetencionGlobalData,
+  type RetencionGlobalData,
   Impuestos,
-  ImpuestosData,
+  type ImpuestosData,
   Cfdi4Request,
-  Cfdi4RequestData,
+  type Cfdi4RequestData,
   CfdiRelacionados,
-  CfdiRelacionadosData,
+  type CfdiRelacionadosData,
   CuentaPredial,
-  CuentaPredialData,
+  type CuentaPredialData,
   DoctoRelacionado,
-  DoctoRelacionadoData,
+  type DoctoRelacionadoData,
   InformacionAduanera,
-  InformacionAduaneraData,
+  type InformacionAduaneraData,
   InformacionGlobal,
-  InformacionGlobalData,
+  type InformacionGlobalData,
   Parte,
-  ParteData,
+  type ParteData,
   Pago,
-  PagoData,
+  type PagoData,
   PagoRequest,
-  PagoRequestData,
+  type PagoRequestData,
 } from './models';
 
 export {
   AcuseCancelacion,
-  AcuseCancelacionRaw,
+  type AcuseCancelacionRaw,
   EstatusCfdi,
-  EstatusCfdiRaw,
+  type EstatusCfdiRaw,
   ResultadoTimbrado,
-  ResultadoTimbradoRaw,
+  type ResultadoTimbradoRaw,
 } from './responses';
 
 export {
