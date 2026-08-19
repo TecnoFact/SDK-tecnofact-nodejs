@@ -7,7 +7,7 @@
 [![CodeQL](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/codeql.yml/badge.svg)](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
-[![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen.svg)](https://nodejs.org/)
+[![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/TecnoFact/SDK-tecnofact-nodejs/blob/main/CONTRIBUTING.md)
 
 SDK oficial de Node.js/TypeScript para la integración con el servicio de Timbrado CFDI 4.0 de TecnoFact. Facilita la emisión, cancelación y consulta de facturas electrónicas cumpliendo con los requisitos del SAT mexicano.
@@ -42,7 +42,7 @@ SDK oficial de Node.js/TypeScript para la integración con el servicio de Timbra
 
 ## 🔧 Requisitos
 
-- **Node.js**: >= 14.0.0
+- **Node.js**: >= 18.0.0
 - **TypeScript**: >= 5.0.0 (opcional, para desarrollo)
 - **Dependencias**: dotenv
 
@@ -447,7 +447,7 @@ Ver [README.docker.md](./README.docker.md) para más detalles.
 El proyecto utiliza GitHub Actions para:
 
 - **CI (Continuous Integration)**: Tests automáticos en cada push/PR
-  - Ejecuta tests en Node.js 14.x, 16.x, 18.x, 20.x
+  - Ejecuta tests en Node.js 18.x, 20.x, 22.x
   - Verifica linting y cobertura de código
   - Sube reportes de cobertura a Codecov
 
