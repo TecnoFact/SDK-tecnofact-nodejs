@@ -52,9 +52,15 @@ jobs:
             VERSION="$(node -p "require('./package.json').version")"
             LATEST_TAG="$(git tag --list 'v*' --sort=-v:refname | head -n 1 || true)"
             LATEST_VERSION="${LATEST_TAG#v}"
+            PKG="$(node -p "require('./package.json').name")"
             if [ "${VERSION}" = "${LATEST_VERSION}" ]; then
-              echo "Version ${VERSION} already released (${LATEST_TAG}); skipping."
-              SHOULD=false
+              if npm view "${PKG}@${VERSION}" version >/dev/null 2>&1; then
+                echo "Version ${VERSION} already released and published; skipping."
+                SHOULD=false
+              else
+                echo "Tag ${LATEST_TAG} exists but ${PKG}@${VERSION} is not on npm; releasing to publish."
+                SHOULD=true
+              fi
             else
               echo "Version ${VERSION} is newer than latest tag ${LATEST_TAG:-none}; releasing."
               SHOULD=true
