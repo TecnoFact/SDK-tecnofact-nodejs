@@ -34,9 +34,10 @@ describe('Config', () => {
       expect(config.getRetries()).toBe(5);
     });
 
-    it('acepta verifySsl=false', () => {
-      const config = new Config({ ...validBase, verifySsl: false });
-      expect(config.getVerifySsl()).toBe(false);
+    it('rechaza verifySsl=false (no se deshabilita TLS a nivel de proceso)', () => {
+      expect(() => new Config({ ...validBase, verifySsl: false })).toThrow(
+        /verifySsl=false no está soportado/
+      );
     });
 
     it('acepta verifySsl como path de CA bundle', () => {
@@ -113,7 +114,7 @@ describe('Config', () => {
         password: 'secret',
         timeout: 60,
         retries: 5,
-        verifySsl: false,
+        verifySsl: true,
       });
 
       expect(config.toObject()).toEqual({
@@ -121,7 +122,7 @@ describe('Config', () => {
         baseUrl: 'https://panelcfdi.tecnofact.mx',
         timeout: 60,
         retries: 5,
-        verifySsl: false,
+        verifySsl: true,
       });
     });
   });
@@ -234,20 +235,20 @@ describe('Config', () => {
       expect(Config.fromEnvironment().getVerifySsl()).toBe(true);
     });
 
-    it('mapea verifySsl "false" → false', () => {
+    it('rechaza verifySsl "false"', () => {
       process.env.TECN_FACT_EMAIL = 'u@e.com';
       process.env.TECN_FACT_PASSWORD = 'p';
       process.env.TECN_FACT_VERIFY_SSL = 'false';
 
-      expect(Config.fromEnvironment().getVerifySsl()).toBe(false);
+      expect(() => Config.fromEnvironment()).toThrow(/verifySsl=false no está soportado/);
     });
 
-    it('mapea verifySsl "0" → false', () => {
+    it('rechaza verifySsl "0"', () => {
       process.env.TECN_FACT_EMAIL = 'u@e.com';
       process.env.TECN_FACT_PASSWORD = 'p';
       process.env.TECN_FACT_VERIFY_SSL = '0';
 
-      expect(Config.fromEnvironment().getVerifySsl()).toBe(false);
+      expect(() => Config.fromEnvironment()).toThrow(/verifySsl=false no está soportado/);
     });
 
     it('mapea verifySsl con path → string (CA bundle)', () => {

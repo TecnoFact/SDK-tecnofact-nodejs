@@ -31,17 +31,10 @@ const isRetryableStatus = (status: number): boolean => status === 429 || status 
  *   Authorization Bearer lo añade el Service por llamada (getHeaders()).
  * - timeout: Config lo guarda en SEGUNDOS; fetch/AbortController usa MS, por
  *   eso aquí se convierte con `* 1000`.
- * - verifySsl: Node fetch (undici) no expone un toggle `verify:false` como
- *   Guzzle. Se mapea de forma pragmática:
- *     true  → comportamiento por defecto (CA del sistema)
- *     false → process.env.NODE_TLS_REJECT_UNAUTHORIZED='0' (INSEGURO; paridad
- *             con PHP `false`). Es global y persistente: limitación conocida.
- *     string (path CA) → process.env.NODE_EXTRA_CA_CERTS=<path>. fetch no
- *             acepta un agente custom de forma simple; esta es la vía soportada
- *             por Node para añadir CAs extra.
- *   Nota: estos ajustes son globales por proceso; no hay forma limpia de
- *   aislarlos por instancia con fetch nativo. Los tests mockean fetch, así que
- *   esto no afecta el comportamiento real en suite.
+ * - verifySsl: native fetch has no per-request `verify:false`. Disabling
+ *   TLS at process level (NODE_TLS_REJECT_UNAUTHORIZED) is rejected in
+ *   Config. Extra CAs must be provided by the host via NODE_EXTRA_CA_CERTS
+ *   before the process starts; this client never mutates TLS env vars.
  * - retry middleware: reintenta en 5xx o 429, hasta `config.getRetries()`
  *   reintentos (intentos totales = 1 + retries), backoff exponencial
  *   `1000 * 2^attempt` ms (attempt parte en 0 para el primer reintento).
@@ -58,16 +51,6 @@ export class HttpClient implements IHttpClient {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     };
-
-    const verifySsl = config.getVerifySsl();
-    if (verifySsl === false) {
-      // INSEGURO. Paridad con PHP `verify => false` (Guzzle). Afecta todo el
-      // proceso; sin dispatcher custom en fetch nativo no se puede aislar.
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-    } else if (typeof verifySsl === 'string' && verifySsl.trim() !== '') {
-      // CA bundle path. Node expose esto vía env para añadir CAs extra.
-      process.env.NODE_EXTRA_CA_CERTS = verifySsl;
-    }
   }
 
   public get<T = Record<string, unknown>>(

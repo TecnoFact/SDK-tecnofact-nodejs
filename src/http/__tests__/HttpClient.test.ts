@@ -78,6 +78,21 @@ describe('HttpClient', () => {
 
       expect(mockFetch.mock.calls[0][0]).toBe('https://panelcfdi.tecnofact.mx/api/foo');
     });
+
+    it('no muta NODE_TLS_REJECT_UNAUTHORIZED ni NODE_EXTRA_CA_CERTS', () => {
+      delete process.env.NODE_TLS_REJECT_UNAUTHORIZED;
+      delete process.env.NODE_EXTRA_CA_CERTS;
+
+      const withCa = new Config({
+        email: 'u@e.com',
+        password: 'p',
+        verifySsl: '/tmp/ca.pem',
+      });
+      new HttpClient(withCa);
+
+      expect(process.env.NODE_TLS_REJECT_UNAUTHORIZED).toBeUndefined();
+      expect(process.env.NODE_EXTRA_CA_CERTS).toBeUndefined();
+    });
   });
 
   describe('post(endpoint, headers, data) — headers 2do, data 3ero', () => {

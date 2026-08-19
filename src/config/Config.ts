@@ -184,6 +184,11 @@ export class Config {
   }
 
   private validateVerifySsl(verifySsl: boolean | string): void {
+    if (verifySsl === false) {
+      throw new Error(
+        'verifySsl=false no está soportado: deshabilitar TLS afecta todo el proceso Node (NODE_TLS_REJECT_UNAUTHORIZED). Use el CA del sistema o un path de CA bundle.'
+      );
+    }
     if (typeof verifySsl === 'string' && verifySsl.trim() === '') {
       throw new Error('VerifySsl no puede ser un string vacío');
     }
