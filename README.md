@@ -1,12 +1,11 @@
 # TecnoFact SDK para Facturación Electrónica CFDI 4.0 - Node.js
 
-[![npm version](https://badge.fury.io/js/%40tecnofact%2Fsdk-nodejs.svg)](https://badge.fury.io/js/%40tecnofact%2Fsdk-nodejs)
+[![npm version](https://img.shields.io/npm/v/%40tecnofact%2Fsdk-nodejs.svg)](https://www.npmjs.com/package/@tecnofact/sdk-nodejs)
 [![npm downloads](https://img.shields.io/npm/dm/@tecnofact/sdk-nodejs.svg)](https://www.npmjs.com/package/@tecnofact/sdk-nodejs)
 [![CI](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/ci.yml/badge.svg)](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/TecnoFact/SDK-tecnofact-nodejs/branch/main/graph/badge.svg)](https://codecov.io/gh/TecnoFact/SDK-tecnofact-nodejs)
 [![CodeQL](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/codeql.yml/badge.svg)](https://github.com/TecnoFact/SDK-tecnofact-nodejs/actions/workflows/codeql.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)](https://nodejs.org/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/TecnoFact/SDK-tecnofact-nodejs/blob/main/CONTRIBUTING.md)
 
@@ -449,7 +448,6 @@ El proyecto utiliza GitHub Actions para:
 - **CI (Continuous Integration)**: Tests automáticos en cada push/PR
   - Ejecuta tests en Node.js 18.x, 20.x, 22.x
   - Verifica linting y cobertura de código
-  - Sube reportes de cobertura a Codecov
 
 - **CD (Continuous Deployment)**: Publicación automática
   - Genera releases en GitHub al crear tags `v*.*.*`
